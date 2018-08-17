@@ -41,7 +41,7 @@ type CreateContentRequest struct {
 		View       struct{
 			Value              string                        `json:"value"`
 			Representation     string                        `json:"representation"`
-		}                                                    `json:"view"`
+		}                                                    `json:"storage"`
 	}                                                        `json:"body"`
 
 

@@ -44,11 +44,11 @@ func main() {
 			View struct {
 				Value          string `json:"value"`;
 				Representation string `json:"representation"`
-			}  `json:"view"`
+			}  `json:"storage"`
 		}{View: struct {
 			Value          string `json:"value"`
 			Representation string `json:"representation"`
-		}   {Value: "ContentBody", Representation: "view"}},
+		}   {Value: "ContentBody", Representation: "storage"}},
 
 	}
 
