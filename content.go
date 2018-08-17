@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"bytes"
+	"fmt"
 )
 
 type Content struct {
@@ -16,16 +18,63 @@ type Content struct {
 		Storage struct {
 			Value          string `json:"value"`
 			Representation string `json:"representation"`
-		} `json:"storage"`
+		} `json:"view"`
 	} `json:"body"`
 	Version struct {
 		Number int `json:"number"`
 	} `json:"version"`
 }
 
+
+type CreateContentRequest struct {
+	Id                         string                        `json:"id"`
+	Title                      string                        `json:"title"`
+	Type                       string                        `json:"type"`
+	Space      struct{
+		Key                    string                        `json:"key"`
+	}                                                        `json:"space"`
+	Status                     string                        `json:"status"`
+	Ancestors  []struct{
+		Id                     string                        `json:"id"`
+	}                                                        `json:"ancestors"`
+	Body       struct{
+		View       struct{
+			Value              string                        `json:"value"`
+			Representation     string                        `json:"representation"`
+		}                                                    `json:"view"`
+	}                                                        `json:"body"`
+
+
+}
+
+
 func (w *Wiki) contentEndpoint(contentID string) (*url.URL, error) {
 	return url.ParseRequestURI(w.endPoint.String() + "/content/" + contentID)
 }
+
+func (w *Wiki)CreateContent(content CreateContentRequest)([]byte,error){
+	contentEndPoint, err := w.contentEndpoint("")
+	if err != nil {
+		return nil,err
+	}
+	c,err := json.Marshal(content)
+	if err !=nil{
+		return nil,err
+	}
+	fmt.Println(string(c),contentEndPoint.String())
+	req,err := http.NewRequest("POST",contentEndPoint.String(),bytes.NewReader(c))
+	if err != nil {
+		return nil,err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := w.sendRequest(req)
+	if err != nil {
+		return nil,err
+	}
+	return resp,nil
+
+}
+
 
 func (w *Wiki) DeleteContent(contentID string) error {
 	contentEndPoint, err := w.contentEndpoint(contentID)
